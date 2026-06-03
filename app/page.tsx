@@ -67,6 +67,9 @@ export default function Home() {
 
     setProgress(0);
     setTextIndex(0);
+    setShowResult(false);
+    setCountdown(3);
+    countdownStartedRef.current = false;
 
 
 
@@ -93,7 +96,7 @@ const progressTimer = setInterval(() => {
     return prev + 1;
 
   });
-}, 260);
+}, 280);
 
 
 
