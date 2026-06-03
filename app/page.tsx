@@ -353,7 +353,7 @@ const progressTimer = setInterval(() => {
 
             {/* DON */}
             <div className={`
-              absolute
+              absolute z-20
               text-[7rem] md:text-[11rem]
               font-black
               text-cyan-300
@@ -374,7 +374,7 @@ const progressTimer = setInterval(() => {
 
             {/* 衝擊波 */}
             {showResult && (
-              <div className="absolute w-[500px] h-[500px] rounded-full border-4 border-cyan-400 animate-[ping_0.8s_ease-out_1] opacity-30" />
+              <div className="absolute z-10 w-[500px] h-[500px] rounded-full border-4 border-cyan-400 animate-[ping_0.8s_ease-out_1] opacity-30" />
             )}
 
           </div>
