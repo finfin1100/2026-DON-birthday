@@ -240,7 +240,7 @@ const progressTimer = setInterval(() => {
           </p>
 
           <h1 className="text-4xl font-bold mb-8">
-            AI 正在分析公司資料
+            AI 正在分析您所提供之資料
           </h1>
 
           {/* 錯誤彈窗 */}
@@ -332,7 +332,7 @@ const progressTimer = setInterval(() => {
         <div className="relative z-10 text-center px-6 scale-[0.88] md:scale-[0.95] origin-center">
 
           {/* 第一段 */}
-          <div className={`transition-all duration-1000 ${
+          <div className={`relative z-30 transition-all duration-1000 ${
             showResult
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-10"
@@ -453,7 +453,7 @@ const progressTimer = setInterval(() => {
         </p>
 
         <h1 className="text-5xl font-bold mb-6 leading-tight">
-          今日最重要人物分析
+          今日最特別人物分析
         </h1>
 
         <p className="text-gray-400 text-lg mb-10">
