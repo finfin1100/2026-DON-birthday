@@ -343,7 +343,7 @@ const progressTimer = setInterval(() => {
 
 
 
-            <h1 className="text-4xl md:text-5xl font-black mb-10">
+            <h1 className="relative z-20 text-4xl md:text-5xl font-black mb-10">
               今日最特別的人是
             </h1>
           </div>
@@ -396,6 +396,7 @@ const progressTimer = setInterval(() => {
 
           {/* 生日快樂 */}
           <div className={`
+            relative z-20
             space-y-4
             transition-all duration-1000 delay-[3200ms]
 
