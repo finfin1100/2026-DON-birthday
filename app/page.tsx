@@ -461,15 +461,35 @@ const progressTimer = setInterval(() => {
         </p>
 
         <button
-onClick={() => {
-if (step === "home") {
+        onClick={() => {
+          if (step === "home") {
 
-  scanningAudioRef.current?.play();
-  backgroundAudioRef.current?.play();
+            scanningAudioRef.current?.play();
+            backgroundAudioRef.current?.play();
 
-  setStep("loading");
-}
-}}
+            // 手機先解鎖 warning 音效
+            if (errorAudioRef.current) {
+              errorAudioRef.current.volume = 0;
+              errorAudioRef.current.play().then(() => {
+                errorAudioRef.current?.pause();
+                errorAudioRef.current!.currentTime = 0;
+                errorAudioRef.current!.volume = 0.7;
+              }).catch(() => {});
+            }
+
+            // 手機先解鎖生日歌
+            if (birthdayAudioRef.current) {
+              birthdayAudioRef.current.volume = 0;
+              birthdayAudioRef.current.play().then(() => {
+                birthdayAudioRef.current?.pause();
+                birthdayAudioRef.current!.currentTime = 0;
+                birthdayAudioRef.current!.volume = 0.45;
+              }).catch(() => {});
+            }
+
+            setStep("loading");
+          }
+        }}
           className="bg-cyan-400 text-black px-8 py-4 rounded-full text-xl font-bold hover:scale-110 transition shadow-[0_0_25px_rgba(34,211,238,0.8)] animate-bounce"
         >
           開始分析
