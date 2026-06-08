@@ -13,7 +13,7 @@ const loadingTexts = [
   "系統即將揭曉!!!",
 ];
 
-const TEXT_INTERVAL = 100;
+const TEXT_INTERVAL = 2600;
 const TOTAL_LOADING_TIME = loadingTexts.length * TEXT_INTERVAL;
 const PROGRESS_INTERVAL = TOTAL_LOADING_TIME / 99;
 const bossAnimationStyle = `
