@@ -13,9 +13,66 @@ const loadingTexts = [
   "系統即將揭曉!!!",
 ];
 
-const TEXT_INTERVAL = 2200;
+const TEXT_INTERVAL = 100;
 const TOTAL_LOADING_TIME = loadingTexts.length * TEXT_INTERVAL;
 const PROGRESS_INTERVAL = TOTAL_LOADING_TIME / 99;
+const bossAnimationStyle = `
+  @keyframes bossWalk {
+    0% { transform: translateX(-260px) translateY(0) scaleX(1); }
+    8% { transform: translateX(-190px) translateY(0) scaleX(1); }
+    14% { transform: translateX(-130px) translateY(0) scaleX(1); }
+
+    17% { transform: translateX(-95px) translateY(0) scaleX(1); }
+    18% { transform: translateX(-65px) translateY(-25px) scaleX(1); }
+    19% { transform: translateX(-35px) translateY(-75px) scaleX(1); }
+    20% { transform: translateX(0px) translateY(-75px) scaleX(1); }
+    21% { transform: translateX(35px) translateY(-75px) scaleX(1); }
+    22% { transform: translateX(65px) translateY(-25px) scaleX(1); }
+    23% { transform: translateX(95px) translateY(0) scaleX(1); }
+    24% { transform: translateX(130px) translateY(0) scaleX(1); }
+
+    44% { transform: translateX(220px) translateY(0) scaleX(1); }
+    47% { transform: translateX(260px) translateY(0) scaleX(1) rotate(-5deg); }
+    50% { transform: translateX(240px) translateY(0) scaleX(-1) rotate(4deg); }
+    53% { transform: translateX(225px) translateY(0) scaleX(-1) rotate(0deg); }
+
+    60% { transform: translateX(145px) translateY(0) scaleX(-1); }
+
+    63% { transform: translateX(105px) translateY(0) scaleX(-1); }
+    64% { transform: translateX(75px) translateY(-25px) scaleX(-1); }
+    65% { transform: translateX(45px) translateY(-75px) scaleX(-1); }
+    66% { transform: translateX(10px) translateY(-75px) scaleX(-1); }
+    67% { transform: translateX(-25px) translateY(-75px) scaleX(-1); }
+    68% { transform: translateX(-55px) translateY(-25px) scaleX(-1); }
+    69% { transform: translateX(-85px) translateY(0) scaleX(-1); }
+    70% { transform: translateX(-125px) translateY(0) scaleX(-1); }
+
+    90% { transform: translateX(-220px) translateY(0) scaleX(-1); }
+    94% { transform: translateX(-270px) translateY(0) scaleX(-1) rotate(5deg); }
+    97% { transform: translateX(-245px) translateY(0) scaleX(1) rotate(-4deg); }
+    100% { transform: translateX(-260px) translateY(0) scaleX(1) rotate(0deg); }
+  }
+
+  @keyframes leftArm {
+    from {
+      transform: rotate(-35deg);
+    }
+
+    to {
+      transform: rotate(35deg);
+    }
+  }
+
+  @keyframes rightArm {
+    from {
+      transform: rotate(35deg);
+    }
+
+    to {
+      transform: rotate(-35deg);
+    }
+  }
+`;
 
 export default function Home() {
   const [step, setStep] = useState("home");
@@ -286,7 +343,8 @@ export default function Home() {
 
   if (step === "result") {
     return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center overflow-hidden relative">
+      <main className="min-h-screen bg-black text-white flex items-center justify-center overflow-visible relative">
+        <style>{bossAnimationStyle}</style>
 
         {/* 背景光 */}
         <div className="absolute w-[900px] h-[900px] bg-cyan-500/20 rounded-full blur-3xl animate-[pulse_0.6s_ease-in-out_infinite]" />
@@ -383,6 +441,50 @@ export default function Home() {
             </p>
 
           </div>
+          {/* 老闆亂跑 */}
+          <div
+            className="fixed bottom-[-60px] left-1/2 z-[999] w-[140px]"
+            style={{
+              animation: "bossWalk 8.5s cubic-bezier(.45,0,.25,1) infinite",
+            }}
+          >
+            {/* 頭 */}
+            <img
+              src="/boss.png"
+              alt="boss"
+              className="w-22 h-26 object-contain rounded-lg mx-auto relative z-10"
+            />
+
+            {/* 脖子 */}
+            <div className="w-6 h-2 bg-[#f1c27d] mx-auto -mt-1.5 relative z-0" />
+
+            {/* 身體 */}
+            <div className="relative w-[100px] h-[108px] bg-cyan-500 mx-auto rounded-md">
+              {/* 左手 */}
+              <div
+                className="absolute top-3 left-[-18px] w-6 h-[88px] bg-[#f1c27d] rounded-b-md"
+                style={{
+                  transformOrigin: "top center",
+                  animation: "leftArm 0.45s infinite alternate",
+                }}
+              />
+
+              {/* 右手 */}
+              <div
+                className="absolute top-3 right-[-18px] w-6 h-[88px] bg-[#f1c27d] rounded-b-md"
+                style={{
+                  transformOrigin: "top center",
+                  animation: "rightArm 0.45s infinite alternate",
+                }}
+              />
+            </div>
+
+            {/* 腳 */}
+            <div className="flex justify-center gap-2">
+              <div className="w-8 h-[88px] bg-blue-700 rounded-b-sm" />
+              <div className="w-8 h-[88px] bg-blue-700 rounded-b-sm" />
+            </div>
+          </div>  
 
           {/* 底部 */}
           <div className={`
@@ -404,6 +506,7 @@ export default function Home() {
   }
 
   return (
+    <>
     <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 overflow-hidden relative">
 
       {/* 光球 */}
@@ -443,5 +546,6 @@ export default function Home() {
         </button>
       </div>
     </main>
+    </>
   );
 }
