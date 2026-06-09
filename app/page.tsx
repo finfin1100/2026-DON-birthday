@@ -2,9 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 
+const bubbleTexts = [
+  "哈哈哈哈哈哈哈",
+  "哈哈哈哈哈哈哈哈",
+  "那今天weekly\n奇數報告吧!!",
+  "等一下, 我接個電話\n...\n好了 繼續",
+  "今天會議就到這邊\n謝謝大家",
+];
+
 const loadingTexts = [
-  "正在打開上軒的電腦",
-  "讀取電腦的秘密",
+  "連線至上軒的電腦",
+  "打開上軒的資料夾",
+  "讀取資料夾的秘密",
   ". . . . . . . .",
   "即將進行現場掃描...",
   ". . . . . . . . .",
@@ -13,45 +22,10 @@ const loadingTexts = [
   "系統即將揭曉!!!",
 ];
 
-const TEXT_INTERVAL = 2600;
+const TEXT_INTERVAL = 2500;
 const TOTAL_LOADING_TIME = loadingTexts.length * TEXT_INTERVAL;
 const PROGRESS_INTERVAL = TOTAL_LOADING_TIME / 99;
 const bossAnimationStyle = `
-  @keyframes bossWalk {
-    0% { transform: translateX(-260px) translateY(0) scaleX(1); }
-    8% { transform: translateX(-190px) translateY(0) scaleX(1); }
-    14% { transform: translateX(-130px) translateY(0) scaleX(1); }
-
-    17% { transform: translateX(-95px) translateY(0) scaleX(1); }
-    18% { transform: translateX(-65px) translateY(-25px) scaleX(1); }
-    19% { transform: translateX(-35px) translateY(-75px) scaleX(1); }
-    20% { transform: translateX(0px) translateY(-75px) scaleX(1); }
-    21% { transform: translateX(35px) translateY(-75px) scaleX(1); }
-    22% { transform: translateX(65px) translateY(-25px) scaleX(1); }
-    23% { transform: translateX(95px) translateY(0) scaleX(1); }
-    24% { transform: translateX(130px) translateY(0) scaleX(1); }
-
-    44% { transform: translateX(220px) translateY(0) scaleX(1); }
-    47% { transform: translateX(260px) translateY(0) scaleX(1) rotate(-5deg); }
-    50% { transform: translateX(240px) translateY(0) scaleX(-1) rotate(4deg); }
-    53% { transform: translateX(225px) translateY(0) scaleX(-1) rotate(0deg); }
-
-    60% { transform: translateX(145px) translateY(0) scaleX(-1); }
-
-    63% { transform: translateX(105px) translateY(0) scaleX(-1); }
-    64% { transform: translateX(75px) translateY(-25px) scaleX(-1); }
-    65% { transform: translateX(45px) translateY(-75px) scaleX(-1); }
-    66% { transform: translateX(10px) translateY(-75px) scaleX(-1); }
-    67% { transform: translateX(-25px) translateY(-75px) scaleX(-1); }
-    68% { transform: translateX(-55px) translateY(-25px) scaleX(-1); }
-    69% { transform: translateX(-85px) translateY(0) scaleX(-1); }
-    70% { transform: translateX(-125px) translateY(0) scaleX(-1); }
-
-    90% { transform: translateX(-220px) translateY(0) scaleX(-1); }
-    94% { transform: translateX(-270px) translateY(0) scaleX(-1) rotate(5deg); }
-    97% { transform: translateX(-245px) translateY(0) scaleX(1) rotate(-4deg); }
-    100% { transform: translateX(-260px) translateY(0) scaleX(1) rotate(0deg); }
-  }
 
   @keyframes leftArm {
     from {
@@ -80,6 +54,16 @@ export default function Home() {
   const [textIndex, setTextIndex] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [countdown, setCountdown] = useState(3);
+  const [showBubble, setShowBubble] = useState(false);
+  const [bubbleText, setBubbleText] = useState("");
+  const [bubblePool, setBubblePool] = useState<string[]>([]);
+
+  const [bossStyle, setBossStyle] = useState({
+    x: -260,
+    y: 0,
+    scaleX: 1,
+    rotate: 0,
+  }); 
   const scanningAudioRef = useRef<HTMLAudioElement | null>(null);
   const backgroundAudioRef = useRef<HTMLAudioElement | null>(null);
   const birthdayAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -102,6 +86,110 @@ export default function Home() {
     whooshAudioRef.current = new Audio("/sounds/whoosh.mp3");
     whooshAudioRef.current.volume = 0.8;
   }, []);
+
+  useEffect(() => {
+    if (!showResult || step !== "result") return;
+
+    let animationFrameId: number;
+    const startTime = performance.now();
+    const duration = 8500;
+
+    const lerp = (start: number, end: number, t: number) => {
+      return start + (end - start) * t;
+    };
+
+    const jump = (
+      startX: number,
+      endX: number,
+      height: number,
+      t: number
+    ) => {
+      const x = lerp(startX, endX, t);
+      const y = -4 * height * t * (1 - t);
+
+      return { x, y };
+    };
+
+    const animate = (now: number) => {
+      const elapsed = (now - startTime) % duration;
+      const percent = (elapsed / duration) * 100;
+
+      let x = -260;
+      let y = 0;
+      let scaleX = 1;
+      let rotate = 0;
+
+      if (percent < 17) {
+        x = lerp(-260, -95, percent / 17);
+        scaleX = 1;
+      } else if (percent < 23) {
+        const pos = jump(-95, 95, 90, (percent - 17) / 6);
+        x = pos.x;
+        y = pos.y;
+        scaleX = 1;
+      } else if (percent < 47) {
+        x = lerp(95, 260, (percent - 23) / 24);
+        scaleX = 1;
+        rotate = percent > 44 ? -5 : 0;
+      } else if (percent < 53) {
+        x = lerp(260, 225, (percent - 47) / 6);
+        scaleX = -1;
+        rotate = lerp(-5, 0, (percent - 47) / 6);
+      } else if (percent < 63) {
+        x = lerp(225, 95, (percent - 53) / 10);
+        scaleX = -1;
+      } else if (percent < 69) {
+        const pos = jump(95, -95, 90, (percent - 63) / 6);
+        x = pos.x;
+        y = pos.y;
+        scaleX = -1;
+      } else if (percent < 94) {
+        x = lerp(-95, -260, (percent - 69) / 25);
+        scaleX = -1;
+        rotate = percent > 90 ? 5 : 0;
+      } else {
+        x = lerp(-260, -260, (percent - 94) / 6);
+        scaleX = 1;
+        rotate = lerp(5, 0, (percent - 94) / 6);
+      }
+
+      setBossStyle({ x, y, scaleX, rotate });
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [showResult, step]);
+
+  useEffect(() => {
+    if (!showResult) return;
+
+    const timer = setInterval(() => {
+      setBubblePool((prevPool) => {
+        let pool = [...prevPool];
+
+        if (pool.length === 0) {
+          pool = [...bubbleTexts].sort(() => Math.random() - 0.5);
+        }
+
+        const randomText = pool.pop()!;
+
+        setBubbleText(randomText);
+        setShowBubble(true);
+
+        setTimeout(() => {
+          setShowBubble(false);
+        }, 4000);
+
+        return pool;
+      });
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [showResult]);
 
   useEffect(() => {
     if (step !== "loading") return;
@@ -162,20 +250,28 @@ export default function Home() {
       backgroundAudioRef.current.currentTime = 0;
     }
 
+    const playCountdownBeep = () => {
+      const beep = new Audio("/sounds/countdown.mp3");
+      beep.volume = 0.7;
+      beep.play();
+    };
+
     setStep("flash");
 
+    playCountdownBeep();
     setCountdown(3);
 
     setTimeout(() => {
+      playCountdownBeep();
       setCountdown(2);
-    }, 650);
+    }, 500);
 
     setTimeout(() => {
+      playCountdownBeep();
       setCountdown(1);
-    }, 1300);
+    }, 1000);
 
     setTimeout(() => {
-
 
       if (scanningAudioRef.current) {
         scanningAudioRef.current.pause();
@@ -209,7 +305,7 @@ export default function Home() {
 
       }, 300);
 
-    }, 1950);
+    }, 1500);
 
   }, 800);
 
@@ -343,7 +439,7 @@ export default function Home() {
 
   if (step === "result") {
     return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center overflow-visible relative">
+      <main className="h-screen bg-black text-white flex items-center justify-center overflow-hidden relative">
         <style>{bossAnimationStyle}</style>
 
         {/* 背景光 */}
@@ -443,48 +539,100 @@ export default function Home() {
           </div>
           {/* 老闆亂跑 */}
           <div
-            className="fixed bottom-[-60px] left-1/2 z-[999] w-[140px]"
+            className="fixed bottom-[-120px] left-1/2 z-[999] w-[140px]"
             style={{
-              animation: "bossWalk 8.5s cubic-bezier(.45,0,.25,1) infinite",
+              transform: `
+                translateX(calc(-50% + ${bossStyle.x}px))
+                translateY(${bossStyle.y}px)
+                scaleX(${bossStyle.scaleX})
+                rotate(${bossStyle.rotate}deg)
+              `,
+              transformOrigin: "center bottom",
             }}
-          >
-            {/* 頭 */}
-            <img
-              src="/boss.png"
-              alt="boss"
-              className="w-22 h-26 object-contain rounded-lg mx-auto relative z-10"
+            >
+            {showBubble && (
+              <div
+                className="
+                  absolute
+                  -top-14
+                  left-1/2
+                  bg-white
+                  text-black
+                  px-4
+                  py-2
+                  rounded-2xl
+                  font-bold
+                  whitespace-pre-line
+                  min-w-[240px]
+                  shadow-xl
+                  z-[9999]
+                "
+                style={{
+                  transform: `
+                    translateX(-50%)
+                    scaleX(${bossStyle.scaleX === -1 ? -1 : 1})
+                  `,
+                }}
+              >
+                <div className="whitespace-pre-line">
+                  {bubbleText}
+                </div>
+
+                <div
+                  className="
+                    absolute
+                    left-1/2
+                    -translate-x-1/2
+                    bottom-[-10px]
+                    w-0
+                    h-0
+                    border-l-[10px]
+                    border-r-[10px]
+                    border-t-[12px]
+                    border-l-transparent
+                    border-r-transparent
+                    border-t-white
+                  "
+                />
+              </div>
+            )}         
+          {/* 頭 */}
+          <img
+            src="/boss.png"
+            alt="boss"
+            className="w-[160px] h-[180px] object-contain rounded-lg mx-auto relative z-10"
+          />
+
+          {/* 脖子 */}
+          <div className="w-5 h-2 bg-[#f1c27d] mx-auto -mt-2 relative z-0" />
+
+          {/* 身體 */}
+          <div className="relative w-[78px] h-[78px] bg-cyan-500 mx-auto rounded-md">
+            {/* 左手 */}
+            <div
+              className="absolute top-3 left-[-14px] w-5 h-[58px] bg-[#f1c27d] rounded-b-md"
+              style={{
+                transformOrigin: "top center",
+                animation: "leftArm 0.45s infinite alternate",
+              }}
             />
 
-            {/* 脖子 */}
-            <div className="w-6 h-2 bg-[#f1c27d] mx-auto -mt-1.5 relative z-0" />
+            {/* 右手 */}
+            <div
+              className="absolute top-3 right-[-14px] w-5 h-[58px] bg-[#f1c27d] rounded-b-md"
+              style={{
+                transformOrigin: "top center",
+                animation: "rightArm 0.45s infinite alternate",
+              }}
+            />
+          </div>
 
-            {/* 身體 */}
-            <div className="relative w-[100px] h-[108px] bg-cyan-500 mx-auto rounded-md">
-              {/* 左手 */}
-              <div
-                className="absolute top-3 left-[-18px] w-6 h-[88px] bg-[#f1c27d] rounded-b-md"
-                style={{
-                  transformOrigin: "top center",
-                  animation: "leftArm 0.45s infinite alternate",
-                }}
-              />
-
-              {/* 右手 */}
-              <div
-                className="absolute top-3 right-[-18px] w-6 h-[88px] bg-[#f1c27d] rounded-b-md"
-                style={{
-                  transformOrigin: "top center",
-                  animation: "rightArm 0.45s infinite alternate",
-                }}
-              />
-            </div>
-
-            {/* 腳 */}
-            <div className="flex justify-center gap-2">
-              <div className="w-8 h-[88px] bg-blue-700 rounded-b-sm" />
-              <div className="w-8 h-[88px] bg-blue-700 rounded-b-sm" />
-            </div>
-          </div>  
+          {/* 腳 */}
+          <div className="flex justify-center gap-2">
+            <div className="w-6 h-[52px] bg-blue-700 rounded-b-sm" />
+            <div className="w-6 h-[52px] bg-blue-700 rounded-b-sm" />
+          </div>
+          </div>
 
           {/* 底部 */}
           <div className={`
