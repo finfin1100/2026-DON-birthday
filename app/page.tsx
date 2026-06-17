@@ -12,18 +12,13 @@ const bubbleTexts = [
 ];
 
 const loadingTexts = [
-  "連線至上軒的電腦",
-  "打開上軒的資料夾",
-  "讀取資料夾的秘密",
-  ". . . . . . . .",
   "即將進行現場掃描...",
-  ". . . . . . . . .",
   "這個人的笑聲很大聲...",
   "笑聲是 哈哈哈哈哈哈哈",
   "系統即將揭曉!!!",
 ];
 
-const TEXT_INTERVAL = 2500;
+const TEXT_INTERVAL = 1400;
 const TOTAL_LOADING_TIME = loadingTexts.length * TEXT_INTERVAL;
 const PROGRESS_INTERVAL = TOTAL_LOADING_TIME / 99;
 const bossAnimationStyle = `
@@ -291,7 +286,7 @@ export default function Home() {
         setShowResult(true);
 
         // DON 飛劍音效：提早一點播，讓中間 0.4 秒對上轉彎點
-        [0, 400, 900, 1500, 2100].forEach((time) => {
+        [0, 500, 1000, 1500, 2100].forEach((time) => {
           setTimeout(() => {
             const whoosh = new Audio("/sounds/whoosh.mp3");
             whoosh.volume = 0.6;
@@ -302,7 +297,7 @@ export default function Home() {
         // 生日歌
         setTimeout(() => {
           birthdayAudioRef.current?.play();
-        }, 4500);
+        }, 0);
 
       }, 300);
 
@@ -358,7 +353,7 @@ export default function Home() {
         {/* 掃描線 */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="scan-line absolute left-0 w-full h-24 z-50 pointer-events-none">
-            <div className="w-full h-full bg-gradient-to-b from-transparent via-cyan-400/70 to-transparent blur-md" />
+            <div className="w-full h-full bg-gradient-to-b from-transparent via-cyan-400/25 to-transparent blur-md" />
           </div>
         </div>
 
